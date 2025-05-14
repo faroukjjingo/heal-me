@@ -1,8 +1,8 @@
+// app/components/TextEditor.js
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, ActivityIndicator, Text, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-
-// Import from our new modular structure
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStethoscope } from '@fortawesome/free-solid-svg-icons';
+import '../styles/TextEditor.css';
 import { analyzeSentiment } from './analysis/SentimentAnalyzer';
 import { analyzeTextComplexity } from './analysis/ComplexityAnalyzer';
 import { countSyllables } from './analysis/ComplexityAnalyzer';
@@ -59,9 +59,9 @@ export const TextEditor = ({
   }, [textData]);
 
   const getSentimentColor = (score) => {
-    if (score > 25) return '#4CAF50';    // Green for positive
-    if (score < -25) return '#f44336';   // Red for negative
-    return '#FFA726';                    // Orange for neutral
+    if (score > 25) return '#4CAF50';
+    if (score < -25) return '#f44336';
+    return '#FFA726';
   };
 
   const getSentimentLabel = (score) => {
@@ -71,131 +71,58 @@ export const TextEditor = ({
   };
 
   return (
-    <View style={styles.section}>
-      <View style={styles.realTimeStats}>
-        <Text style={styles.statText}>
+    <div className="section">
+      <div className="realTimeStats">
+        <span className="statText">
           Words: {realTimeAnalysis.wordCount}
-        </Text>
-        <Text style={[
-          styles.statText,
-          { color: getSentimentColor(realTimeAnalysis.sentiment.score) }
-        ]}>
+        </span>
+        <span 
+          className="statText"
+          style={{ color: getSentimentColor(realTimeAnalysis.sentiment.score) }}
+        >
           Sentiment: {getSentimentLabel(realTimeAnalysis.sentiment.score)}
-        </Text>
-        <Text style={styles.statText}>
+        </span>
+        <span className="statText">
           Complexity: {Math.round(realTimeAnalysis.complexity)}
-        </Text>
-        <Text style={styles.statText}>
+        </span>
+        <span className="statText">
           Syllables: {realTimeAnalysis.syllableCount}
-        </Text>
-      </View>
+        </span>
+      </div>
 
-      <View style={styles.sentimentDistribution}>
-        <Text style={styles.distributionText}>
+      <div className="sentimentDistribution">
+        <span className="distributionText">
           Positive: {realTimeAnalysis.sentiment.distribution.positive.toFixed(1)}%
-        </Text>
-        <Text style={styles.distributionText}>
+        </span>
+        <span className="distributionText">
           Negative: {realTimeAnalysis.sentiment.distribution.negative.toFixed(1)}%
-        </Text>
-        <Text style={styles.distributionText}>
+        </span>
+        <span className="distributionText">
           Neutral: {realTimeAnalysis.sentiment.distribution.neutral.toFixed(1)}%
-        </Text>
-      </View>
+        </span>
+      </div>
 
-      <TextInput
-        style={styles.textArea}
-        multiline
+      <textarea
+        className="textArea"
         value={textData}
-        onChangeText={onTextChange}
+        onChange={(e) => onTextChange(e.target.value)}
         placeholder="Enter or paste medical text for analysis..."
-        placeholderTextColor="#666"
       />
 
-      <TouchableOpacity
-        style={styles.analyzeButton}
-        onPress={onAnalyze}
+      <button
+        className="analyzeButton"
+        onClick={onAnalyze}
         disabled={loading}
       >
         {loading ? (
-          <ActivityIndicator color="#fff" />
+          <div className="loader"></div>
         ) : (
-          <View style={styles.buttonContent}>
-            <Icon name="stethoscope" size={20} color="#fff" />
-            <Text style={styles.buttonText}>Analyze Clinical Text</Text>
-          </View>
+          <div className="buttonContent">
+            <FontAwesomeIcon icon={faStethoscope} size="lg" color="#fff" />
+            <span className="buttonText">Analyze Clinical Text</span>
+          </div>
         )}
-      </TouchableOpacity>
-    </View>
+      </button>
+    </div>
   );
 };
-
-const styles = StyleSheet.create({
-  section: {
-    padding: 20,
-    backgroundColor: '#002432',
-    borderRadius: 10,
-    marginTop: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  realTimeStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-    backgroundColor: '#003545',
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  sentimentDistribution: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 8,
-    backgroundColor: '#004555',
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  distributionText: {
-    color: '#fff',
-    fontSize: 12,
-    fontFamily: 'Helvetica Neue',
-    opacity: 0.9,
-  },
-  statText: {
-    color: '#fff',
-    fontSize: 14,
-    fontFamily: 'Helvetica Neue',
-  },
-  textArea: {
-    backgroundColor: '#fff',
-    color: '#000',
-    fontSize: 16,
-    padding: 15,
-    borderRadius: 8,
-    height: 150,
-    textAlignVertical: 'top',
-    marginBottom: 15,
-    fontFamily: 'Helvetica Neue',
-  },
-  analyzeButton: {
-    backgroundColor: '#27C7B8',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  buttonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    marginLeft: 10,
-    fontSize: 16,
-    fontFamily: 'Helvetica Neue',
-  },
-});
