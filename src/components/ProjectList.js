@@ -2,7 +2,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import '../../styles/ProjectList.css';
+import '../styles/ProjectList.css';
 
 export const ProjectList = ({ 
   projects, 
