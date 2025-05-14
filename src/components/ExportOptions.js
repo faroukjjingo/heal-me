@@ -1,81 +1,34 @@
-// components/Export/ExportOptions.js
+// app/components/ExportOptions.js
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
+import '../styles/ExportOptions.css';
 
 export const ExportOptions = ({ 
   exportFormat, 
   onFormatChange, 
   onExport 
 }) => (
-  <View style={styles.section}>
-    <View style={styles.exportContainer}>
-      <TouchableOpacity 
-        style={styles.exportButton}
-        onPress={onExport}
+  <div className="section">
+    <div className="exportContainer">
+      <button 
+        className="exportButton"
+        onClick={onExport}
       >
-        <Icon name="download" size={20} color="#fff" />
-        <Text style={styles.buttonText}>Export Analysis</Text>
-      </TouchableOpacity>
-      <View style={styles.formatSelector}>
+        <FontAwesomeIcon icon={faDownload} size="lg" color="#fff" />
+        <span className="buttonText">Export Analysis</span>
+      </button>
+      <div className="formatSelector">
         {['json', 'csv'].map((format) => (
-          <TouchableOpacity
+          <button
             key={format}
-            style={[ 
-              styles.formatButton,
-              exportFormat === format && styles.activeFormat
-            ]}
-            onPress={() => onFormatChange(format)}
+            className={`formatButton ${exportFormat === format ? 'activeFormat' : ''}`}
+            onClick={() => onFormatChange(format)}
           >
-            <Text style={styles.formatText}>
-              {format.toUpperCase()}
-            </Text>
-          </TouchableOpacity>
+            {format.toUpperCase()}
+          </button>
         ))}
-      </View>
-    </View>
-  </View>
+      </div>
+    </div>
+  </div>
 );
-
-const styles = StyleSheet.create({
-  section: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#ffffff',
-  },
-  exportContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  exportButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#27C7B8',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-  },
-  buttonText: {
-    marginLeft: 8,
-    fontSize: 16,
-    color: '#fff',
-  },
-  formatSelector: {
-    flexDirection: 'row',
-  },
-  formatButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: '#F4F4F4',
-    marginLeft: 10,
-    borderRadius: 5,
-  },
-  activeFormat: {
-    backgroundColor: '#27C7B8',
-  },
-  formatText: {
-    fontSize: 16,
-    color: '#002432',
-  },
-});
