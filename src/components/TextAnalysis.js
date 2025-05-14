@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { FileUpload } from './FileUpload';
 import { TextEditor } from './TextEditor';
-import QuickStats from './QuickStats';
+import { QuickStats } from './QuickStats';
 import { MedicalTerms } from './MedicalTerms';
 import { TopicDistribution } from './TopicDistribution';
 import AnalysisCharts from './charts/AnalysisCharts';
