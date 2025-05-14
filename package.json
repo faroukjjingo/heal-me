@@ -24,6 +24,9 @@
     "web-vitals": "^4.2.3"
   },
   "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "update-browserslist-db": "^1.1.0"
   },
   "scripts": {
@@ -38,10 +41,7 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ],
-    "rules": {
-      "no-unexpected-token": "error"
-    }
+    ]
   },
   "browserslist": {
     "production": [
