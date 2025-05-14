@@ -1,9 +1,20 @@
+// src/components/charts/AnalysisCharts.js
 import React, { useMemo } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { BarChart, LineChart, PieChart } from 'react-native-chart-kit';
-import { Dimensions } from 'react-native';
-
-const screenWidth = Dimensions.get('window').width;
+import {
+  Bar,
+  BarChart,
+  LineChart,
+  PieChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  Cell,
+} from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from './chart';
+import './AnalysisCharts.css';
 
 const emotionColors = {
   joy: '#FFB400',
@@ -32,39 +43,42 @@ const defaultColor = '#0EA5E9';
 
 const getIntensityColor = (baseColor, intensity) => {
   const alpha = Math.max(0.4, intensity / 100);
-  return `${baseColor}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`;
+  const hexAlpha = Math.round(alpha * 255).toString(16).padStart(2, '0');
+  return `${baseColor}${hexAlpha}`;
 };
 
 const validateEmotionsData = (emotions) => {
   if (!emotions || typeof emotions !== 'object') {
     return false;
   }
-  return Object.values(emotions).some(value => 
-    value && 
-    typeof value.percentage === 'number' && 
-    !isNaN(value.percentage) && 
-    value.percentage > 0 &&
-    typeof value.intensity === 'string'
+  return Object.values(emotions).some(
+    (value) =>
+      value &&
+      typeof value.percentage === 'number' &&
+      !isNaN(value.percentage) &&
+      value.percentage > 0 &&
+      typeof value.intensity === 'string'
   );
 };
 
-export const AnalysisCharts = ({
+const AnalysisCharts = ({
   analysisResults,
   visualization = 'bar',
   onVisualizationChange,
   maxEmotions = 10,
   showIntensity = true,
-  showDistribution = true,
   showDetailedAnalysis = true,
 }) => {
   const processedData = useMemo(() => {
-    if (!analysisResults?.emotionAnalysis?.emotions || 
-        !validateEmotionsData(analysisResults.emotionAnalysis.emotions)) {
+    if (
+      !analysisResults?.emotionAnalysis?.emotions ||
+      !validateEmotionsData(analysisResults.emotionAnalysis.emotions)
+    ) {
       return null;
     }
 
     const emotions = analysisResults.emotionAnalysis.emotions;
-    
+
     const emotionsArray = Object.entries(emotions)
       .filter(([, value]) => value && value.percentage > 0)
       .map(([emotion, value]) => ({
@@ -72,400 +86,248 @@ export const AnalysisCharts = ({
         percentage: value.percentage,
         intensity: value.intensity,
         count: value.count,
-        matches: value.matches
+        matches: value.matches,
       }))
       .sort((a, b) => b.percentage - a.percentage)
       .slice(0, maxEmotions);
 
-    return {
-      labels: emotionsArray.map(item => item.emotion),
-      data: emotionsArray.map(item => item.percentage),
-      intensities: emotionsArray.map(item => item.intensity),
-      counts: emotionsArray.map(item => item.count),
-      matches: emotionsArray.map(item => item.matches),
-      colors: emotionsArray.map(item => 
-        showIntensity 
-          ? getIntensityColor(emotionColors[item.emotion] || defaultColor, item.percentage)
-          : emotionColors[item.emotion] || defaultColor
-      )
-    };
+    return emotionsArray.map((item) => ({
+      emotion: item.emotion,
+      percentage: item.percentage,
+      intensity: item.intensity,
+      count: item.count,
+      matches: item.matches,
+      fill: showIntensity
+        ? getIntensityColor(emotionColors[item.emotion] || defaultColor, item.percentage)
+        : emotionColors[item.emotion] || defaultColor,
+    }));
   }, [analysisResults, maxEmotions, showIntensity]);
 
   const complexityData = useMemo(() => {
-    return analysisResults?.emotionAnalysis?.emotionalComplexity || {
-      score: 0,
-      activeEmotions: 0,
-      totalEmotions: 0,
-      complexity: 'low'
-    };
+    return (
+      analysisResults?.emotionAnalysis?.emotionalComplexity || {
+        score: 0,
+        activeEmotions: 0,
+        totalEmotions: 0,
+        complexity: 'low',
+      }
+    );
   }, [analysisResults]);
 
   const detailedAnalysis = useMemo(() => {
     return analysisResults?.emotionAnalysis?.emotionalAnalysis || null;
   }, [analysisResults]);
 
+  const chartConfig = useMemo(() => {
+    const config = {
+      percentage: {
+        label: 'Percentage',
+      },
+    };
+    processedData?.forEach((item) => {
+      config[item.emotion] = {
+        label: item.emotion.charAt(0).toUpperCase() + item.emotion.slice(1),
+        color: item.fill,
+      };
+    });
+    return config;
+  }, [processedData]);
+
   if (!processedData) {
     return (
-      <View style={styles.chartsContainer}>
-        <Text style={styles.chartTitle}>Enhanced Emotional Analysis</Text>
-        <Text style={styles.noEmotionsText}>No emotion data available.</Text>
-      </View>
+      <div className="charts-container">
+        <h2 className="chart-title">Enhanced Emotional Analysis</h2>
+        <p className="no-emotions-text">No emotion data available.</p>
+      </div>
     );
   }
 
-  const chartConfig = {
-    backgroundGradientFrom: '#ffffff',
-    backgroundGradientTo: '#ffffff',
-    color: (opacity = 1) => `rgba(0, 0, 0, ${Math.max(0.6, opacity)})`,
-    strokeWidth: 3,
-    barPercentage: 0.8,
-    useShadowColorFromDataset: false,
-    decimalPlaces: 1,
-    propsForLabels: {
-      fontSize: 11,
-      fontWeight: '600',
-    },
-    fillShadowGradientFrom: '#000000',
-    fillShadowGradientTo: '#000000',
-    fillShadowGradientOpacity: 0.1,
-  };
-
-  const chartData = {
-    labels: processedData.labels,
-    datasets: [
-      {
-        data: processedData.data,
-        colors: processedData.colors.map(color => () => color),
-      },
-    ],
-  };
-
-  const pieChartData = processedData.labels.map((label, index) => ({
-    name: label,
-    population: processedData.data[index],
-    color: processedData.colors[index],
-    legendFontColor: '#7F7F7F',
-    legendFontSize: 12,
-  }));
-
   return (
-    <ScrollView style={styles.mainContainer}>
-      <View style={styles.chartsContainer}>
-        <View style={styles.header}>
-          <Text style={styles.chartTitle}>Enhanced Emotional Analysis</Text>
-          <View style={styles.visualizationToggle}>
-            <TouchableOpacity
-              style={[
-                styles.toggleButton,
-                visualization === 'bar' && styles.activeToggleButton,
-              ]}
-              onPress={() => onVisualizationChange('bar')}
+    <div className="main-container">
+      <div className="charts-container">
+        <div className="header">
+          <h2 className="chart-title">Enhanced Emotional Analysis</h2>
+          <div className="visualization-toggle">
+            <button
+              className={`toggle-button ${visualization === 'bar' ? 'active' : ''}`}
+              onClick={() => onVisualizationChange('bar')}
             >
-              <Text style={[
-                styles.toggleButtonText,
-                visualization === 'bar' && styles.activeToggleButtonText,
-              ]}>
-                Bar
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.toggleButton,
-                visualization === 'line' && styles.activeToggleButton,
-              ]}
-              onPress={() => onVisualizationChange('line')}
+              Bar
+            </button>
+            <button
+              className={`toggle-button ${visualization === 'line' ? 'active' : ''}`}
+              onClick={() => onVisualizationChange('line')}
             >
-              <Text style={[
-                styles.toggleButtonText,
-                visualization === 'line' && styles.activeToggleButtonText,
-              ]}>
-                Line
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.toggleButton,
-                visualization === 'pie' && styles.activeToggleButton,
-              ]}
-              onPress={() => onVisualizationChange('pie')}
+              Line
+            </button>
+            <button
+              className={`toggle-button ${visualization === 'pie' ? 'active' : ''}`}
+              onClick={() => onVisualizationChange('pie')}
             >
-              <Text style={[
-                styles.toggleButtonText,
-                visualization === 'pie' && styles.activeToggleButtonText,
-              ]}>
-                Pie
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+              Pie
+            </button>
+          </div>
+        </div>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.chartWrapper}>
+        <div className="chart-wrapper">
+          <ChartContainer config={chartConfig} className="chart-container">
             {visualization === 'bar' && (
-              <BarChart
-                data={chartData}
-                width={Math.max(screenWidth - 40, processedData.labels.length * 65)}
-                height={320}
-                chartConfig={chartConfig}
-                verticalLabelRotation={45}
-                showValuesOnTopOfBars={true}
-                fromZero={true}
-                style={styles.chart}
-              />
+              <BarChart accessibilityLayer data={processedData}>
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="emotion"
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
+                  tickFormatter={(value) => value.slice(0, 3)}
+                />
+                <YAxis beginAtZero tickCount={5} />
+                <ChartTooltip content={<ChartTooltipContent indicator="dot" />} />
+                <ChartLegend content={<ChartLegendContent />} />
+                <Bar dataKey="percentage" radius={4}>
+                  {processedData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                  ))}
+                </Bar>
+              </BarChart>
             )}
             {visualization === 'line' && (
-              <LineChart
-                data={chartData}
-                width={Math.max(screenWidth - 40, processedData.labels.length * 65)}
-                height={320}
-                chartConfig={chartConfig}
-                verticalLabelRotation={45}
-                bezier={true}
-                fromZero={true}
-                style={styles.chart}
-              />
+              <LineChart accessibilityLayer data={processedData}>
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="emotion"
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
+                  tickFormatter={(value) => value.slice(0, 3)}
+                />
+                <YAxis beginAtZero tickCount={5} />
+                <ChartTooltip content={<ChartTooltipContent indicator="line" />} />
+                <ChartLegend content={<ChartLegendContent />} />
+                <Line
+                  type="monotone"
+                  dataKey="percentage"
+                  stroke={defaultColor}
+                  strokeWidth={3}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
             )}
             {visualization === 'pie' && (
-              <PieChart
-                data={pieChartData}
-                width={screenWidth - 40}
-                height={320}
-                chartConfig={chartConfig}
-                accessor="population"
-                backgroundColor="transparent"
-                paddingLeft="15"
-                center={[10, 0]}
-                style={styles.chart}
-              />
+              <PieChart>
+                <Pie
+                  data={processedData}
+                  dataKey="percentage"
+                  nameKey="emotion"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  label
+                >
+                  {processedData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                  ))}
+                </Pie>
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartLegend content={<ChartLegendContent />} />
+              </PieChart>
             )}
-          </View>
-        </ScrollView>
+          </ChartContainer>
+        </div>
 
-        <View style={styles.complexitySection}>
-          <Text style={styles.sectionTitle}>Emotional Complexity Analysis</Text>
-          <View style={styles.complexityStats}>
-            <View style={styles.complexityStatItem}>
-              <Text style={styles.statLabel}>Complexity Score</Text>
-              <Text style={styles.statValue}>{complexityData.score.toFixed(1)}%</Text>
-            </View>
-            <View style={styles.complexityStatItem}>
-              <Text style={styles.statLabel}>Active Emotions</Text>
-              <Text style={styles.statValue}>{complexityData.activeEmotions} / {complexityData.totalEmotions}</Text>
-            </View>
-            <View style={styles.complexityStatItem}>
-              <Text style={styles.statLabel}>Complexity Level</Text>
-              <Text style={[
-                styles.statValue,
-                styles[`complexity${complexityData.complexity.charAt(0).toUpperCase() + complexityData.complexity.slice(1)}`]
-              ]}>
+        <div className="complexity-section">
+          <h3 className="section-title">Emotional Complexity Analysis</h3>
+          <div className="complexity-stats">
+            <div className="complexity-stat-item">
+              <span className="stat-label">Complexity Score</span>
+              <span className="stat-value">{complexityData.score.toFixed(1)}%</span>
+            </div>
+            <div className="complexity-stat-item">
+              <span className="stat-label">Active Emotions</span>
+              <span className="stat-value">
+                {complexityData.activeEmotions} / {complexityData.totalEmotions}
+              </span>
+            </div>
+            <div className="complexity-stat-item">
+              <span className="stat-label">Complexity Level</span>
+              <span
+                className={`stat-value complexity-${
+                  complexityData.complexity.charAt(0).toUpperCase() +
+                  complexityData.complexity.slice(1)
+                }`}
+              >
                 {complexityData.complexity.toUpperCase()}
-              </Text>
-            </View>
-          </View>
-        </View>
-
+              </span>
+            </div>
+          </div>
+        </div>
 
         {showDetailedAnalysis && detailedAnalysis && (
-          <View style={styles.detailedAnalysisSection}>
-            <Text style={styles.sectionTitle}>Detailed Analysis</Text>
+          <div className="detailed-analysis-section">
+            <h3 className="section-title">Detailed Analysis</h3>
             {detailedAnalysis.pattern && (
-              <View style={styles.patternCard}>
-                <Text style={styles.patternTitle}>
-                  Pattern Identified: {detailedAnalysis.pattern.replace(/_/g, ' ')}
-                </Text>
-              </View>
+              <div className="pattern-card">
+                <span className="pattern-title">
+                  Pattern Identified:{' '}
+                  {detailedAnalysis.pattern.replace(/_/g, ' ')}
+                </span>
+              </div>
             )}
-            <View style={styles.analysisDetails}>
-              <AnalysisItem title="Summary" content={detailedAnalysis.analysis.summary} />
-              <AnalysisItem title="Emotional State" content={detailedAnalysis.analysis.emotional_state} />
-              <AnalysisItem title="Treatment Attitude" content={detailedAnalysis.analysis.treatment_attitude} />
-              <AnalysisItem title="Coping Mechanisms" content={detailedAnalysis.analysis.coping_mechanisms} />
-              <AnalysisItem title="Social Support" content={detailedAnalysis.analysis.social_support} />
-              <AnalysisItem title="Health Beliefs" content={detailedAnalysis.analysis.health_beliefs} />
-              <AnalysisItem title="Motivation" content={detailedAnalysis.analysis.motivation} />
-              <AnalysisItem title="Perceived Barriers" content={detailedAnalysis.analysis.perceived_barriers} />
-              <AnalysisItem title="General Wellbeing" content={detailedAnalysis.analysis.general_wellbeing} />
-              <AnalysisItem 
-                title="Cultural & Socioeconomic Influences" 
-                content={detailedAnalysis.analysis.cultural_soc_econ_influences} 
+            <div className="analysis-details">
+              <AnalysisItem
+                title="Summary"
+                content={detailedAnalysis.analysis.summary}
               />
-            </View>
-          </View>
+              <AnalysisItem
+                title="Emotional State"
+                content={detailedAnalysis.analysis.emotional_state}
+              />
+              <AnalysisItem
+                title="Treatment Attitude"
+                content={detailedAnalysis.analysis.treatment_attitude}
+              />
+              <AnalysisItem
+                title="Coping Mechanisms"
+                content={detailedAnalysis.analysis.coping_mechanisms}
+              />
+              <AnalysisItem
+                title="Social Support"
+                content={detailedAnalysis.analysis.social_support}
+              />
+              <AnalysisItem
+                title="Health Beliefs"
+                content={detailedAnalysis.analysis.health_beliefs}
+              />
+              <AnalysisItem
+                title="Motivation"
+                content={detailedAnalysis.analysis.motivation}
+              />
+              <AnalysisItem
+                title="Perceived Barriers"
+                content={detailedAnalysis.analysis.perceived_barriers}
+              />
+              <AnalysisItem
+                title="General Wellbeing"
+                content={detailedAnalysis.analysis.general_wellbeing}
+              />
+              <AnalysisItem
+                title="Cultural & Socioeconomic Influences"
+                content={detailedAnalysis.analysis.cultural_soc_econ_influences}
+              />
+            </div>
+          </div>
         )}
-      </View>
-    </ScrollView>
+      </div>
+    </div>
   );
 };
 
 const AnalysisItem = ({ title, content }) => (
-  <View style={styles.analysisItem}>
-    <Text style={styles.analysisItemTitle}>{title}</Text>
-    <Text style={styles.analysisItemContent}>{content}</Text>
-  </View>
+  <div className="analysis-item">
+    <h4 className="analysis-item-title">{title}</h4>
+    <p className="analysis-item-content">{content}</p>
+  </div>
 );
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
-  chartsContainer: {
-    padding: 20,
-  },
-  header: {
-    marginBottom: 20,
-  },
-  chartTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 15,
-  },
-  visualizationToggle: {
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
-  toggleButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: '#f1f5f9',
-    marginRight: 10,
-  },
-  activeToggleButton: {
-    backgroundColor: '#0ea5e9',
-  },
-  toggleButtonText: {
-    color: '#64748b',
-    fontWeight: '600',
-  },
-  activeToggleButtonText: {
-    color: '#ffffff',
-  },
-  chartWrapper: {
-    marginBottom: 20,
-  },
-  chart: {
-    borderRadius: 16,
-  },
-  complexitySection: {
-    marginVertical: 20,
-    padding: 15,
-    backgroundColor: '#f8fafc',
-    borderRadius: 12,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 15,
-    color: '#1e293b',
-  },
-  complexityStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  complexityStatItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#64748b',
-    marginBottom: 5,
-  },
-  statValue: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#1e293b',
-  },
-  complexityLow: {
-    color: '#dc2626',
-  },
-  complexityModerate: {
-    color: '#eab308',
-  },
-  complexityHigh: {
-    color: '#16a34a',
-  },
-  intensitySection: {
-    marginVertical: 20,
-  },
-  intensityList: {
-    backgroundColor: '#f8fafc',
-    borderRadius: 12,
-    padding: 15,
-  },
-  intensityItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  intensityDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginRight: 10,
-  },
-  intensityItemContent: {
-    flex: 1,
-  },
-  emotionLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1e293b',
-    marginBottom: 2,
-  },
-  intensityStats: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  intensityValue: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#64748b',
-  },
-  intensityCount: {
-    fontSize: 12,
-    color: '#94a3b8',
-  },
-  detailedAnalysisSection: {
-    marginVertical: 20,
-  },
-  patternCard: {
-    backgroundColor: '#f0f9ff',
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 15,
-  },
-  patternTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#0369a1',
-  },
-  analysisDetails: {
-    backgroundColor: '#f8fafc',
-    borderRadius: 12,
-    padding: 15,
-  },
-  analysisItem: {
-    marginBottom: 15,
-  },
-  analysisItemTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#1e293b',
-    marginBottom: 5,
-  },
-  analysisItemContent: {
-    fontSize: 14,
-    color: '#64748b',
-    lineHeight: 20,
-  },
-  noEmotionsText: {
-    fontSize: 16,
-    color: '#64748b',
-    textAlign: 'center',
-    marginTop: 20,
-  },
-});
 
 export default AnalysisCharts;
