@@ -9,7 +9,7 @@ import { TopicDistribution } from './TopicDistribution';
 import AnalysisCharts from './charts/AnalysisCharts';
 import { Notes } from './Notes';
 import { ProjectList } from './ProjectList';
-import ExportOptions from './ExportOptions';
+import { ExportOptions } from './ExportOptions';
 import { performCompleteAnalysis } from './analysis/Analysis';
 import '../styles/TextAnalysisStyles.css';
 
