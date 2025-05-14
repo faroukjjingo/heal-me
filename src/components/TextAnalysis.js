@@ -115,8 +115,7 @@ const TextAnalysis = () => {
   const handleExport = async () => {
     try {
       const exportData = {
-        project FRESHNESS
-: currentProject,
+        project: currentProject,
         analysisResults,
         notes,
         medicalTerms,
