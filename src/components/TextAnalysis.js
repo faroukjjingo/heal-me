@@ -1,14 +1,14 @@
 // app/components/TextAnalysis.js
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
-import FileUpload from './FileUpload';
-import TextEditor from './TextEditor';
+import { FileUpload } from './FileUpload';
+import { TextEditor } from './TextEditor';
 import QuickStats from './QuickStats';
-import MedicalTerms from './MedicalTerms';
-import TopicDistribution from './TopicDistribution';
+import { MedicalTerms } from './MedicalTerms';
+import { TopicDistribution } from './TopicDistribution';
 import AnalysisCharts from './charts/AnalysisCharts';
-import Notes from './Notes';
-import ProjectList from './ProjectList';
+import { Notes } from './Notes';
+import { ProjectList } from './ProjectList';
 import ExportOptions from './ExportOptions';
 import { performCompleteAnalysis } from './analysis/Analysis';
 import '../styles/TextAnalysisStyles.css';
