@@ -1,22 +1,18 @@
-// Main TextAnalysis component
-// TextAnalysis.js
+// app/components/TextAnalysis.js
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { KeyboardAvoidingView, ScrollView, Platform, Alert, Animated } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FileUpload } from './FileUpload';
-import { TextEditor } from './TextEditor';
-import { QuickStats } from './QuickStats';
-import { MedicalTerms } from './MedicalTerms';
-import { TopicDistribution } from './TopicDistribution';
-import { AnalysisCharts } from './charts/AnalysisCharts';
-import { Notes } from './Notes';
-import { ProjectList } from './ProjectList';
-import { ExportOptions } from './ExportOptions';
+import FileUpload from './FileUpload';
+import TextEditor from './TextEditor';
+import QuickStats from './QuickStats';
+import MedicalTerms from './MedicalTerms';
+import TopicDistribution from './TopicDistribution';
+import AnalysisCharts from './charts/AnalysisCharts';
+import Notes from './Notes';
+import ProjectList from './ProjectList';
+import ExportOptions from './ExportOptions';
 import { performCompleteAnalysis } from './analysis/Analysis';
-import { styles } from './TextAnalysisStyles';
+import { styles } from '../styles/TextAnalysisStyles';
 
 const TextAnalysis = () => {
-  // State management
   const [textData, setTextData] = useState('');
   const [analysisResults, setAnalysisResults] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -37,11 +33,8 @@ const TextAnalysis = () => {
   const [exportFormat, setExportFormat] = useState('json');
   const [visualization, setVisualization] = useState('bar');
 
-  // Animations
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(0)).current;
-
-  // Auto-save timer
   const autoSaveTimer = useRef(null);
 
   useEffect(() => {
@@ -56,7 +49,7 @@ const TextAnalysis = () => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 1000,
+        duration: 600,
         useNativeDriver: true,
       }),
       Animated.spring(slideAnim, {
@@ -70,19 +63,20 @@ const TextAnalysis = () => {
 
   const loadInitialData = async () => {
     try {
-      const savedProjects = await AsyncStorage.getItem('textAnalysisProjects');
+      const savedProjects = localStorage.getItem('textAnalysisProjects');
       if (savedProjects) setProjects(JSON.parse(savedProjects));
       
-      const savedCategories = await AsyncStorage.getItem('analysisCategories');
+ LIFECYCLE METHODS AND HOOKS
+      const savedCategories = localStorage.getItem('analysisCategories');
       if (savedCategories) setCategories(JSON.parse(savedCategories));
     } catch (error) {
-      Alert.alert('Error', 'Failed to load saved data');
+      alert('Failed to load saved data');
     }
   };
 
   const handleAnalyzeText = async () => {
     if (!textData) {
-      Alert.alert('Error', 'Please enter or upload text to analyze');
+      alert('Please enter or upload text to analyze');
       return;
     }
 
@@ -93,14 +87,15 @@ const TextAnalysis = () => {
       setMedicalTerms(results.medicalTermsFound);
       if (autoSaveEnabled) scheduleAutoSave();
     } catch (error) {
-      Alert.alert('Analysis Error', error.message);
+      alert(error.message);
     } finally {
       setLoading(false);
     }
   };
 
   const scheduleAutoSave = () => {
-    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+    if (autoSaveTimer.currentLATENCY AND PERFORMANCE
+) clearTimeout(autoSaveTimer.current);
     autoSaveTimer.current = setTimeout(async () => {
       await saveProject();
       setLastSaved(new Date().toISOString());
@@ -126,14 +121,14 @@ const TextAnalysis = () => {
         ? projects.map(p => p.id === currentProject.id ? project : p)
         : [...projects, project];
 
-      await AsyncStorage.setItem('textAnalysisProjects', JSON.stringify(updatedProjects));
+      localStorage.setItem('textAnalysisProjects', JSON.stringify(updatedProjects));
       setProjects(updatedProjects);
       setCurrentProject(project);
       setLastSaved(new Date().toISOString());
 
-      Alert.alert('Success', 'Project saved successfully');
+      alert('Project saved successfully');
     } catch (error) {
-      Alert.alert('Error', 'Failed to save project');
+      alert('Failed to save project');
     }
   };
 
@@ -159,24 +154,35 @@ const TextAnalysis = () => {
           exportContent = JSON.stringify(exportData);
       }
 
-      Alert.alert('Export Success', `Data exported in ${exportFormat.toUpperCase()} format`);
+      const blob = new Blob([exportContent], { type: `text/${exportFormat}` });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `analysis_export.${exportFormat}`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+
+      alert(`Data exported in ${exportFormat.toUpperCase()} format`);
     } catch (error) {
-      Alert.alert('Export Error', error.message);
+      alert(error.message);
     }
   };
 
   const convertToCSV = (data) => {
-    // Implementation of CSV conversion would go here
-    return 'CSV conversion would be implemented here';
+    const headers = ['Project', 'Analysis Results', 'Notes', 'Medical Terms', 'Export Date'];
+    const rows = [[
+      data.project?.name || '',
+      JSON.stringify(data.analysisResults),
+      data.notes,
+      data.medicalTerms.join(','),
+      data.exportDate
+    ]];
+    return [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
   };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <ScrollView>
-        
+    <div className={styles.container}>
+      <div className={styles.scrollContainer}>
         <FileUpload onFileSelect={setTextData} />
         
         <TextEditor
@@ -228,8 +234,8 @@ const TextAnalysis = () => {
           onFormatChange={setExportFormat}
           onExport={handleExport}
         />
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </div>
+    </div>
   );
 };
 
