@@ -1,14 +1,13 @@
 // app/components/Header.js
 import React from 'react';
+import { motion } from 'framer-motion';
 
-export const Header = ({ fadeAnim, slideAnim }) => (
-  <div
+export const Header = () => (
+  <motion.div
+    initial={{ opacity: 0, y: 50 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, ease: 'easeOut' }}
     style={{
-      opacity: fadeAnim,
-      transform: `translateY(${slideAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [50, 0],
-      })}px)`,
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -38,10 +37,10 @@ export const Header = ({ fadeAnim, slideAnim }) => (
         color: '#F78837',
         textAlign: 'center',
         marginTop: '0.25rem',
-        fontFamily: '"Helvetica Neue", Arial, sans-serif',
+        fontFamily: '" Helena Neue", Arial, sans-serif',
       }}
     >
       Advanced Medical Documentation Analysis Tool
     </p>
-  </div>
+  </motion.div>
 );
