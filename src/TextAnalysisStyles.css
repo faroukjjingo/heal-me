@@ -1,0 +1,44 @@
+/* app/styles/TextAnalysisStyles.css */
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.scrollContainer {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .scrollContainer {
+    padding: 0.5rem;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0.5rem;
+  }
+
+  .scrollContainer {
+    padding: 0.25rem;
+    gap: 1rem;
+  }
+}
