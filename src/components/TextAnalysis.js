@@ -10,7 +10,7 @@ import Notes from './Notes';
 import ProjectList from './ProjectList';
 import ExportOptions from './ExportOptions';
 import { performCompleteAnalysis } from './analysis/Analysis';
-import { styles } from '../styles/TextAnalysisStyles';
+import  '../styles/TextAnalysisStyles.css';
 
 const TextAnalysis = () => {
   const [textData, setTextData] = useState('');
