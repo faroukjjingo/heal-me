@@ -1,0 +1,64 @@
+/* src/styles/QuickStats.css */
+.quick-stats-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 1.25rem;
+  padding: 0.9375rem;
+  background-color: #002432;
+  border-radius: 0.625rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  gap: 0.9375rem;
+}
+
+.stat-card {
+  background-color: #27c7b8;
+  padding: 0.9375rem;
+  border-radius: 0.5rem;
+  width: calc(50% - 0.46875rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stat-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #dfe4e5;
+  margin-bottom: 0.3125rem;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .stat-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-stats-container {
+    padding: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .stat-card {
+    padding: 0.75rem;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+  }
+
+  .stat-value {
+    font-size: 1rem;
+  }
+}
