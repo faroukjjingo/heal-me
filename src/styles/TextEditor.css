@@ -1,0 +1,91 @@
+/* app/styles/TextEditorStyles.css */
+.section {
+  padding: 1.25rem;
+  background-color: #002432;
+  border-radius: 0.625rem;
+  margin-top: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.realTimeStats {
+  display: flex;
+  justify-content: space-around;
+  padding: 0.625rem;
+  background-color: #003545;
+  border-radius: 0.5rem;
+  margin-bottom: 0.625rem;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.sentimentDistribution {
+  display: flex;
+  justify-content: space-around;
+  padding: 0.5rem;
+  background-color: #004555;
+  border-radius: 0.5rem;
+  margin-bottom: 0.625rem;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.distributionText {
+  color: #fff;
+  font-size: 0.75rem;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  opacity: 0.9;
+}
+
+.statText {
+  color: #fff;
+  font-size: 0.875rem;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+.textArea {
+  background-color: #fff;
+  color: #000;
+  font-size: 1rem;
+  padding: 0.9375rem;
+  border-radius: 0.5rem;
+  height: 9.375rem;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 0.9375rem;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  border: none;
+  resize: vertical;
+  outline: none;
+}
+
+.textArea::placeholder {
+  color: #666;
+}
+
+.analyzeButton {
+  background-color: #27C7B8;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.analyzeButton:disabled {
+  background-color: #1a8c80;
+  cursor: not-allowed;
+}
+
+.analyzeButton:hover:not(:disabled) {
+  background-color: #22b3a5;
+  transform: translateY(-2px);
+}
+
+.buttonContent {
+  display: flex
