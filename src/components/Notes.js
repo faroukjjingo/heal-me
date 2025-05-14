@@ -1,49 +1,46 @@
-// components/Notes/Notes.js
+// app/components/Notes/Notes.js
 import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
 
 export const Notes = ({ notes, onNotesChange }) => (
-  <View style={styles.section}>
-    <Text style={styles.sectionHeader}>Clinical Notes</Text>
-    <TextInput
-      style={[styles.textArea, styles.notesInput]}
-      multiline
+  <div
+    style={{
+      padding: '1.25rem',
+      backgroundColor: '#ffffff',
+      borderRadius: '0.625rem',
+      boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+      marginBottom: '1.25rem',
+      width: '100%',
+      boxSizing: 'border-box',
+    }}
+  >
+    <h2
+      style={{
+        fontSize: '1.25rem',
+        fontWeight: '700',
+        color: '#002432',
+        marginBottom: '0.625rem',
+      }}
+    >
+      Clinical Notes
+    </h2>
+    <textarea
+      style={{
+        height: '9.375rem',
+        padding: '0.9375rem',
+        borderRadius: '0.625rem',
+        backgroundColor: '#F4F4F4',
+        fontSize: '1rem',
+        color: '#333',
+        fontFamily: 'Arial, sans-serif',
+        width: '100%',
+        boxSizing: 'border-box',
+        border: 'none',
+        resize: 'vertical',
+        outline: 'none',
+      }}
       value={notes}
-      onChangeText={onNotesChange}
+      onChange={(e) => onNotesChange(e.target.value)}
       placeholder="Add clinical observations and notes..."
-      placeholderTextColor="#666"
     />
-  </View>
+  </div>
 );
-
-const styles = StyleSheet.create({
-  section: {
-    padding: 20,
-    backgroundColor: '#ffffff', // White background for the notes section
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-    marginBottom: 20,
-  },
-  sectionHeader: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#002432', // Ocean Obsidian for section header text
-    marginBottom: 10,
-  },
-  textArea: {
-    height: 150,
-    padding: 15,
-    borderRadius: 10,
-    backgroundColor: '#F4F4F4', // Light gray background for the text area
-    fontSize: 16,
-    color: '#333', // Dark gray for the text
-    textAlignVertical: 'top', // Ensures text aligns to the top of the input box
-  },
-  notesInput: {
-    fontFamily: 'Arial', // Modern and legible font
-  },
-});
