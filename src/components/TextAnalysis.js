@@ -1,5 +1,6 @@
 // app/components/TextAnalysis.js
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { motion } from 'framer-motion';
 import FileUpload from './FileUpload';
 import TextEditor from './TextEditor';
 import QuickStats from './QuickStats';
@@ -10,7 +11,7 @@ import Notes from './Notes';
 import ProjectList from './ProjectList';
 import ExportOptions from './ExportOptions';
 import { performCompleteAnalysis } from './analysis/Analysis';
-import  '../styles/TextAnalysisStyles.css';
+import '../styles/TextAnalysisStyles.css';
 
 const TextAnalysis = () => {
   const [textData, setTextData] = useState('');
@@ -33,40 +34,20 @@ const TextAnalysis = () => {
   const [exportFormat, setExportFormat] = useState('json');
   const [visualization, setVisualization] = useState('bar');
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(0)).current;
   const autoSaveTimer = useRef(null);
 
   useEffect(() => {
     loadInitialData();
-    startAnimations();
     return () => {
       if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
     };
   }, []);
-
-  const startAnimations = () => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-      Animated.spring(slideAnim, {
-        toValue: 1,
-        tension: 20,
-        friction: 7,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
 
   const loadInitialData = async () => {
     try {
       const savedProjects = localStorage.getItem('textAnalysisProjects');
       if (savedProjects) setProjects(JSON.parse(savedProjects));
       
- LIFECYCLE METHODS AND HOOKS
       const savedCategories = localStorage.getItem('analysisCategories');
       if (savedCategories) setCategories(JSON.parse(savedCategories));
     } catch (error) {
@@ -94,8 +75,7 @@ const TextAnalysis = () => {
   };
 
   const scheduleAutoSave = () => {
-    if (autoSaveTimer.currentLATENCY AND PERFORMANCE
-) clearTimeout(autoSaveTimer.current);
+    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
     autoSaveTimer.current = setTimeout(async () => {
       await saveProject();
       setLastSaved(new Date().toISOString());
@@ -135,7 +115,8 @@ const TextAnalysis = () => {
   const handleExport = async () => {
     try {
       const exportData = {
-        project: currentProject,
+        project FRESHNESS
+: currentProject,
         analysisResults,
         notes,
         medicalTerms,
@@ -181,8 +162,13 @@ const TextAnalysis = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.scrollContainer}>
+    <motion.div
+      className="container"
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+    >
+      <div className="scrollContainer">
         <FileUpload onFileSelect={setTextData} />
         
         <TextEditor
@@ -235,7 +221,7 @@ const TextAnalysis = () => {
           onExport={handleExport}
         />
       </div>
-    </div>
+    </motion.div>
   );
 };
 
