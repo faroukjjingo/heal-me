@@ -1,6 +1,6 @@
 // app/components/AnalysisResults/QuickStats.js
 import React from 'react';
-import '../../styles/QuickStats.css';
+import '../styles/QuickStats.css';
 
 export const QuickStats = ({ analysisResults, medicalTerms }) => (
   <div className="quick-stats-container">
