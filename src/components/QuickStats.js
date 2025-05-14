@@ -1,71 +1,167 @@
-// components/AnalysisResults/QuickStats.js
+// app/components/AnalysisResults/QuickStats.js
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
 
 export const QuickStats = ({ analysisResults, medicalTerms }) => (
-  <View style={styles.statsGrid}>
-    <View style={styles.statCard}>
-      <Text style={styles.statLabel}>Word Count</Text>
-      <Text style={styles.statValue}>{analysisResults.wordCount}</Text>
-    </View>
-    <View style={styles.statCard}>
-      <Text style={styles.statLabel}>Readability</Text>
-      <Text style={styles.statValue}>
+  <div
+    style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      marginTop: '1.25rem',
+      padding: '0.9375rem',
+      backgroundColor: '#002432',
+      borderRadius: '0.625rem',
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+      gap: '0.9375rem',
+    }}
+  >
+    <div
+      style={{
+        backgroundColor: '#27C7B8',
+        padding: '0.9375rem',
+        borderRadius: '0.5rem',
+        width: 'calc(50% - 0.46875rem)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+        '@media (max-width: 768px)': {
+          width: '100%',
+        },
+      }}
+    >
+      <span
+        style={{
+          fontSize: '1rem',
+          fontWeight: '700',
+          color: '#DFE4E5',
+          marginBottom: '0.3125rem',
+        }}
+      >
+        Word Count
+      </span>
+      <span
+        style={{
+          fontSize: '1.125rem',
+          fontWeight: '600',
+          color: '#FFFFFF',
+          textAlign: 'center',
+        }}
+      >
+        {analysisResults.wordCount}
+      </span>
+    </div>
+    <div
+      style={{
+        backgroundColor: '#27C7B8',
+        padding: '0.9375rem',
+        borderRadius: '0.5rem',
+        width: 'calc(50% - 0.46875rem)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+        '@media (max-width: 768px)': {
+          width: '100%',
+        },
+      }}
+    >
+      <span
+        style={{
+          fontSize: '1rem',
+          fontWeight: '700',
+          color: '#DFE4E5',
+ |         marginBottom: '0.3125rem',
+        }}
+      >
+        Readability
+      </span>
+      <span
+        style={{
+          fontSize: '1.125rem',
+          fontWeight: '600',
+          color: '#FFFFFF',
+          textAlign: 'center',
+        }}
+      >
         {analysisResults.readabilityScore.toFixed(1)}
-      </Text>
-    </View>
-    <View style={styles.statCard}>
-      <Text style={styles.statLabel}>Medical Terms</Text>
-      <Text style={styles.statValue}>{medicalTerms.length}</Text>
-    </View>
-    <View style={styles.statCard}>
-      <Text style={styles.statLabel}>Sentiment</Text>
-      <Text style={styles.statValue}>
+      </span>
+    </div>
+    <div
+      style={{
+        backgroundColor: '#27C7B8',
+        padding: '0.9375rem',
+        borderRadius: '0.5rem',
+        width: 'calc(50% - 0.46875rem)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+        '@media (max-width: 768px)': {
+          width: '100%',
+        },
+      }}
+    >
+      <span
+        style={{
+          fontSize: '1rem',
+          fontWeight: '700',
+          color: '#DFE4E5',
+          marginBottom: '0.3125rem',
+        }}
+      >
+        Medical Terms
+      </span>
+      <span
+        style={{
+          fontSize: '1.125rem',
+          fontWeight: '600',
+          color: '#FFFFFF',
+          textAlign: 'center',
+        }}
+      >
+        {medicalTerms.length}
+      </span>
+    </div>
+    <div
+      style={{
+        backgroundColor: '#27C7B8',
+        padding: '0.9375rem',
+        borderRadius: '0.5rem',
+        width: 'calc(50% - 0.46875rem)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+        '@media (max-width: 768px)': {
+          width: '100%',
+        },
+      }}
+    >
+      <span
+        style={{
+          fontSize: '1rem',
+          fontWeight: '700',
+          color: '#DFE4E5',
+          marginBottom: '0.3125rem',
+        }}
+      >
+        Sentiment
+      </span>
+      <span
+        style={{
+          fontSize: '1.125rem',
+          fontWeight: '600',
+          color: '#FFFFFF',
+          textAlign: 'center',
+        }}
+      >
         {analysisResults.sentimentData.score.toFixed(1)}%
-      </Text>
-    </View>
-  </View>
+      </span>
+    </div>
+  </div>
 );
-
-const styles = StyleSheet.create({
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginTop: 20,
-    padding: 15,
-    backgroundColor: '#002432', // Ocean Obsidian for background
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  statCard: {
-    backgroundColor: '#27C7B8', // Teal Tide for the cards
-    padding: 15,
-    borderRadius: 8,
-    width: '45%',
-    marginBottom: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  statLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#DFE4E5', // Coral Cloud for label text
-    marginBottom: 5,
-  },
-  statValue: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF', // White for stat values
-    textAlign: 'center',
-  },
-});
