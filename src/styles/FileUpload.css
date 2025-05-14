@@ -1,0 +1,96 @@
+/* app/styles/FileUploadStyles.css */
+.section {
+  padding: 1.5rem;
+  background-color: #002432;
+  border-radius: 0.625rem;
+  margin-top: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sectionHeader {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #DFE4E5;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.uploadContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.uploadButton {
+  display: flex;
+  align-items: center;
+  background-color: #27C7B8;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.uploadButton:hover {
+  background-color: #22b3a5;
+  transform: translateY(-2px);
+}
+
+.uploadButtonText {
+  font-size: 1rem;
+  color: #FFFFFF;
+  margin-left: 0.625rem;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 500;
+}
+
+.supportedFormats {
+  font-size: 0.875rem;
+  color: #F78837;
+  text-align: center;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .sectionHeader {
+    font-size: 1.25rem;
+  }
+
+  .uploadButton {
+    padding: 0.625rem 1rem;
+  }
+
+  .uploadButtonText {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    padding: 0.75rem;
+  }
+
+  .sectionHeader {
+    font-size: 1.125rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .uploadButton {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .uploadButtonText {
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
+  }
+
+  .supportedFormats {
+    font-size: 0.75rem;
+  }
+}
